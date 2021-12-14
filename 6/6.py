@@ -8,7 +8,7 @@ def get_input(dev):
         
 def get_final_fish_count(fish, num_of_days):
     for i in range(num_of_days):
-        print(f'Day #{i} - {fish}')
+        # print(f'Day #{i} - {fish}')
         new_fish_this_day = []
         for index, f in enumerate(fish):
             if f == 0:
@@ -22,7 +22,8 @@ def get_final_fish_count(fish, num_of_days):
 
 def main():
     data = get_input(True)
-    print(get_final_fish_count(data, 80))
+    for i in range(20):
+        print(get_final_fish_count(data, i+1))
 
 if __name__ == "__main__":
     main()
