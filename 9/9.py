@@ -1,3 +1,5 @@
+from time import perf_counter
+
 def get_input(dev):
     data = []
     if dev:
@@ -14,36 +16,52 @@ def get_input(dev):
 def get_low_points(data):
     low_points = []
     for row in range(len(data)):
-        for col in range(len(data[row])):
+        for col in range(len(data[row])):     
+            if data[row][col] == 9:
+                continue
+            neighbours = []
+            if row > 0:
+                neighbours.append(data[row-1][col])
+            if row < len(data)-1:
+                neighbours.append(data[row+1][col])
+            if col > 0:
+                neighbours.append(data[row][col-1])
+            if col < len(data[row])-1:
+                neighbours.append(data[row][col+1])
+            if data[row][col] < min(neighbours):
+                low_points.append((row,col))
+            
             # check top
-            if row > 0  and data[row][col] < data[row-1][col]:
-                pass
-            elif row == 0:
-                pass
-            else:
-                continue
-            # check left
-            if col >0 and data[row][col] < data[row][col-1]:
-                pass
-            elif col == 0:
-                pass
-            else:
-                continue
-            # check right
-            if col < len(data[row])-1 and data[row][col] < data[row][col+1]:
-                pass
-            elif col == len(data[row])-1:
-                pass
-            else:
-                continue
-            # check bottom
-            if row < len(data) -1 and data[row][col] < data[row+1][col]:
-                pass
-            elif row == len(data) - 1:
-                pass
-            else:
-                continue
-            low_points.append((row, col))
+
+            # if row > 0  and data[row][col] < data[row-1][col]:
+            #     pass
+            # elif row == 0:
+            #     pass
+            # else:
+            #     continue
+            # # check left
+            # if col >0 and data[row][col] < data[row][col-1]:
+            #     pass
+            # elif col == 0:
+            #     pass
+            # else:
+            #     continue
+            # # check right
+            # if col < len(data[row])-1 and data[row][col] < data[row][col+1]:
+            #     pass
+            # elif col == len(data[row])-1:
+            #     pass
+            # else:
+            #     continue
+            # # check bottom
+            # if row < len(data) -1 and data[row][col] < data[row+1][col]:
+            #     pass
+            # elif row == len(data) - 1:
+            #     pass
+            # else:
+            #     continue
+            # low_points.append((row, col))
+    print(low_points)
     return low_points
 
 def get_risk_level_sum(data, low_points):
@@ -54,39 +72,40 @@ def get_risk_level_sum(data, low_points):
     return result
 
 def get_basin(data, row, col):
-    print(f'row: {row}, col: {col}')
     basin = [(row, col)]
     new_points = []
     print(f'Low point {row,col}, value: {data[row][col]}')
     # top
-    if row > 0 and data[row][col] < data[row-1][col]:
+    if 0 < row < len(data)-1 and data[row][col] < data[row-1][col] and data[row-1][col] != 9:
         new_points.append((row-1,col))
     # left
-    elif col > 0 and data[row][col] < data[row][col-1]:
+    if 0 < col < len(data[row])-1 and data[row][col] < data[row][col-1] and data[row][col-1] != 9: 
         new_points.append((row,col-1))
     # right
-    elif col < len(data[row]) and data[row][col] < data[row][col+1]:
+    if 0 < col < len(data[row])-1 and data[row][col] < data[row][col+1] and data[row][col+1] != 9:
         new_points.append((row,col+1))
     # bottom
-    elif row < len(data) and data[row][col] < data[row+1][col]:
+    if 0 < row < len(data)-1 and data[row][col] < data[row+1][col] and data[row+1][col] != 9:
         new_points.append((row+1,col))
-    for np in new_points:
-        print(np)
-        basins = get_basin(data, np[0], np[1])
-        for b in basins:
-            new_points.append(b)
+    print(f'new points: {new_points}')
     for np in new_points:
         basin.append(np)
     return basin
 
 def get_next_point(row, col, data):
     pass
+
 def main():
-    debug = True
+    debug = False
     data = get_input(debug)
-    low_points = get_low_points(data)
-    basins = [get_basin(data, lp[0], lp[1]) for lp in low_points]
-    print(basins)
+    t0 = perf_counter()
+    for _ in range(1000):
+        low_points = get_low_points(data)
+    t = perf_counter()
+    print(f'Elapsed time: {t-t0}')
+    # basins = [get_basin(data, lp[0], lp[1]) for lp in low_points]
+    # for basin in basins:
+    #     print(basin)
 
 if __name__ == "__main__":
     main()
